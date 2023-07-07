@@ -16,4 +16,4 @@ _How to understand the code_
 
 2 - You can have acces to the "include files" which contain _data's computation_ and the _components_ declaration. The "function_component.jl" contain the main features, the component declaration. At the moment I'm writting this Readme.md the component called "soil_n_var_layer" contain the most updated work. So the focus have to be done on that. note : it uses the "wall_component" which is a serie of R-C-R-C-R (like a wall) and a component soil_temp which is a constant-voltage (temperature). 
 
-3 - The code "function_component.jl" contain also @component which are prepared to be updated like the _"soil_MTRCM_var_pin_var"_, b
+3 - The code "function_component.jl" contain also @component which are prepared to be updated like the _"soil_MTRCM_var_pin_var"_, more updates will be done. 
