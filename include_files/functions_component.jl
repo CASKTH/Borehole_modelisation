@@ -131,191 +131,198 @@ end
     extend(ODESystem(eqs, t, sts, ps; name = name), oneport)
 end
 
-@component function VariableCurrent_evolve_var_pins_1(nb_pin,sign;  name, tspan=1.0)
+@component function VariableCurrent_evolve_var_pins_1(nb_pin, T_soil,sign,  timer_; name)
           
 
-    ps = @parameters t, x tspan=tspan
-    @variables u(..) cumuSum(..)  q_pin(t)[1:10] x_min x_max heat_flow
     
-    # tspan = 1
-    x_min = 0:0.1:0.9 
-    x_max = 0.1:0.1:10
-    
-    
-        # Integral limits are defined with DomainSets.ClosedInterval
-    
-    
-        # typeof(q_pin)
-        xmin = 0.0
-        xmax = 1.0
-    
-        
-    
-        Ix = Integral(x in DomainSets.ClosedInterval(xmin, xmax)) # basically cumulative sum from 0 to x
-    
-    
-        Dt = Differential(t)
-        Dx = Differential(x)
-        Dxx = Differential(x)^2
-    
-    
-        # @named p = Pin()
-        # @named n = Pin()
-        
-        component_ODE = Vector{ODESystem}()
-        equations = Vector{Equation}()
-        # equations = [T_wall ~ v]
-        # nb_pin =10
-        for index = 1:nb_pin
-            ## Create the R 
-            
-            ODE_system_pin_i= Pin(name = Symbol(string("ODE_system_pin_",index)))
-    
-            
-            # add them to the component Array 
-    
-            push!(component_ODE, ODE_system_pin_i)
-            
-            # connect the the rest depending of the index and the n size 
-            
-            # if (index-1) != 0
-            #     push!(equations, connect(ODE_system_pin_i, component_ODE[index-1]))
-            # end
-    
-            # if(index == nb_pin)
-            #     push!(equations, (component[1].v - component[nb_pin].v) ~ T_wall)
-            # end
-    
-        end 
-        
-        ## Q_pin vector with integral of pins voltage 
-        
-    
-        Diffusivity = 100
-        Velocity = 0.0001
-        Source_term = (1/((4159*1000)))
-        
-    
-        eq = [
-            # cumuSum(t, x) ~ 0,
-    
-            Dt(u(t, x)) - Diffusivity*Dxx(u(t, x)) + Velocity*Dx(u(t, x)) - Source_term*(cumuSum(t,x)) ~ 0,
-    
-        ]
-        #We can't access to the variables used for discretization but we can use T_wall 
-        # because cumusum and u aren't declare as the same as after discretization
-        bcs = [u(0.0, x) ~ 0.0, Dx(u(t, xmin)) ~ 0.0, Dx(u(t, xmax)) ~ 0]
-    
-        domains = [t ∈ Interval(0.0, tspan), x ∈ Interval(xmin, xmax)]
-    
-        @named pde_system = PDESystem(eq, bcs, domains, [t, x], [u(t, x)])
-        discretization = MOLFiniteDifference([x => nb_pin], t)
-        molsys, tspan = symbolic_discretize(pde_system,discretization)
-        @unpack u = molsys
-        
-        ## Connections 
-    
-    
-        for k =1:nb_pin 
-            Ix = Integral(x in DomainSets.ClosedInterval(x_min[k], x_max[k]))
-            
-           
-            # component[k].i ~ Symbolics.scalarize(cumuSum)[k]
-           
-            # push!(equations, component_ODE[k].i ~ Symbolics.scalarize(cumuSum)[k])
-            push!(equations, component_ODE[k].i ~ Velocity*Source_term*(Ix((Symbolics.scalarize(u)[k]))-component_ODE[k].v))
-        end 
-        
-        f_c_d(x, i) = ceil(x) == i
-        push!(equations, cumuSum(t,x) ~ sum((component_ODE[k].i*f_c_d(x,k) for k=1:10)))
-        # i ~ Symbolics.scalarize(cumuSum)[1],
-        # 
-        # v ~ ODE_system_pin.v,
-        # i ~ ODE_system_pin.i
-    
-        
-    
-        connected = extend(molsys,ODESystem(equations, t, [], []; name = :connected))
-    
-        compose(connected,component_ODE; name = name)
-end
-@component function VariableCurrent_evolve_var_pins_2(nb_pin,sign, timer;  name)
-          
-    @parameters x, cumuSum(x)
+    @parameters x
     @parameters tspan
-    tspan = timer
     @variables t
-    # sts = @variables q(t) = 1.0 
-    @variables u(..)
+    @variables u(..) cumuSum(..)
+
+    
+    R1 = Rcond
+    R2 = Rgg
+    R3 = Rsoil_1
+    C1 = C_pipe
+    C2 = C_grout
+
+    sign = sign 
+    T_soil = T_soil
+    tspan = timer_
+
+
+
     xmin = 0.0
     xmax = 1.0
     Dt = Differential(t)
     Dx = Differential(x)
     Dxx = Differential(x)^2
-    
-    
+    nb_pin = nb_pin
+
+
+    @named ground = Ground()
+    @named soil_temp_1 = ConstantVoltage(V=T_soil)
+
     component_ODE = Vector{ODESystem}()
-    equations = Vector{Equation}()
     
-    for index = 1:nb_pin 
+    for index = 1:(nb_pin) 
+
+        ODE_system_pin_i= Pin(name = Symbol(string("ODE_system_pin_1_",index)))
+        push!(component_ODE, ODE_system_pin_i)
     
-        ## Create the R 
+    end 
+    
+    Heat_flow(x) = sum((component_ODE[k].i*f_c_d(x*nb_pin,k) for k=1:(nb_pin)))
+    
+    ## Q_pin vector with integral of pins voltage 
+    
+    
+    
+    Velocity = 0.0001*sign
+    Source_term = (1/((4159*1000)))
+    Diffusivity = 100*Source_term
+
+    # x_min = 0.0:0.1:0.9
+    # x_max = 0.1:0.1:1.0
+
+
+    # Ix(xmin) = Integral(x in DomainSets.ClosedInterval(xmin, x))
+    # @register_symbolic Ix(xmin)
+    
+    # f_IX_(x) = sum((Ix(x_min[k])(Heat_flow(x)))*f_c_d(x*nb_pin, k) for k=1:nb_pin)
+
+    # @register_symbolic f_IX_(x)
+
+    eq = [
+        Dt(u(t, x)) - Diffusivity*Dxx(u(t, x)) + Velocity*Dx(u(t, x)) - Source_term*(Heat_flow(x)) ~ 0,
+    ]
+    #We can't access to the variables used for discretization but we can use T_wall 
+    # because cumusum and u aren't declare as the same as after discretization
+    bcs = [u(0.0, x) ~ T_soil, Dx(u(t, xmin)) ~ 0.0, Dx(u(t, xmax)) ~ 0.0]
+
+    domains = [t ∈ Interval(0.0, tspan), x ∈ Interval(xmin, xmax)]
+
+    @named pde_system = PDESystem(eq, bcs, domains, [t, x], [u(t, x)])
+    discretization = MOLFiniteDifference([x => nb_pin], t)
+    # ds = DiscreteSpace(domains, [u(t,x).val], [x.val], discretization)
+    
+    molsys, tspan = symbolic_discretize(pde_system,discretization)
+    
+
+    @unpack u = molsys
+
+
+    equations_sys = Vector{Equation}()
+    for k =1:(nb_pin)
+
+        push!(equations_sys, component_ODE[k].i ~ Velocity*(1/Source_term)*(((Symbolics.scalarize(u)[k]))-component_ODE[k].v))
         
+    end 
+
+    
+    # sys_connection = ODESystem(eq, t; name =:Discretisation)
+    
+    sys_eq_1 = ODESystem(equations_sys, t; name=:Discretisation_1)
+    sys_comp = compose(sys_eq_1,[component_ODE...])
+    
+    sys = extend(sys_comp, molsys)
+end
+@component function VariableCurrent_evolve_var_pins_2(nb_pin, T_soil, sign, timer_;  name)
+
+    @parameters x
+    @parameters tspan
+    @variables t
+    @variables u(..) cumuSum(..)
+
+    
+    R1 = Rcond
+    R2 = Rgg
+    R3 = Rsoil_1
+    C1 = C_pipe
+    C2 = C_grout
+    sign = sign 
+    
+    T_soil = T_soil
+    tspan = timer_
+
+
+
+    xmin = 0.0
+    xmax = 1.0
+    Dt = Differential(t)
+    Dx = Differential(x)
+    Dxx = Differential(x)^2
+    nb_pin = nb_pin
+
+
+    @named ground = Ground()
+    @named soil_temp_1 = ConstantVoltage(V=T_soil)
+
+    component_ODE = Vector{ODESystem}()
+    
+    for index = 1:(nb_pin) 
+
         ODE_system_pin_i= Pin(name = Symbol(string("ODE_system_pin_2_",index)))
         push!(component_ODE, ODE_system_pin_i)
     
     end 
     
+    Heat_flow(x) = sum((component_ODE[k].i*f_c_d(x*nb_pin,k) for k=1:(nb_pin)))
+    
     ## Q_pin vector with integral of pins voltage 
     
     
-    Diffusivity = 100
-    Velocity = 0.0001
+    
+    Velocity = 0.0001*sign
     Source_term = (1/((4159*1000)))
+    Diffusivity = 100*Source_term
+
+    # x_min = 0.0:0.1:0.9
+    # x_max = 0.1:0.1:1.0
+
+
+    # Ix(xmin) = Integral(x in DomainSets.ClosedInterval(xmin, x))
+    # @register_symbolic Ix(xmin)
+    
+    # f_IX_(x) = sum((Ix(x_min[k])(Heat_flow(x)))*f_c_d(x*nb_pin, k) for k=1:nb_pin)
+
+    # @register_symbolic f_IX_(x)
+
+    eq = [
+        Dt(u(t, x)) - Diffusivity*Dxx(u(t, x)) + Velocity*Dx(u(t, x)) - Source_term*(Heat_flow(x)) ~ 0,
+    ]
+    #We can't access to the variables used for discretization but we can use T_wall 
+    # because cumusum and u aren't declare as the same as after discretization
+    bcs = [u(0.0, x) ~ T_soil, Dx(u(t, xmin)) ~ 0.0, Dx(u(t, xmax)) ~ 0.0]
+
+    domains = [t ∈ Interval(0.0, tspan), x ∈ Interval(xmin, xmax)]
+
+    @named pde_system = PDESystem(eq, bcs, domains, [t, x], [u(t, x)])
+    discretization = MOLFiniteDifference([x => nb_pin], t)
+    # ds = DiscreteSpace(domains, [u(t,x).val], [x.val], discretization)
+    
+    molsys, tspan = symbolic_discretize(pde_system,discretization)
     
 
-    # f_IX_(x_1,x_2) = Integral(x in DomainSets.ClosedInterval(x_1...,x_2...)) 
-    
-        eq = [
-    
-        
-    
-            Dt(u(t, x)) - Diffusivity*Dxx(u(t, x)) + Velocity*Dx(u(t, x)) - Source_term*(cumuSum...) ~ 0,
-    
-        ]
-        #We can't access to the variables used for discretization but we can use T_wall 
-        # because cumusum and u aren't declare as the same as after discretization
-        bcs = [u(0.0, x) ~ 0.0, Dx(u(t, xmin)) ~ 0.0, Dx(u(t, xmax)) ~ 0]
-    
-        domains = [t ∈ Interval(0.0, tspan), x ∈ Interval(xmin, xmax)]
-    
-        @named pde_system = PDESystem(eq, bcs, domains, [t, x], [u(t, x)], [cumuSum => 0.0])
-        discretization = MOLFiniteDifference([x => nb_pin], t)
-        # ds = DiscreteSpace(domains, [u(t,x).val], [x.val], discretization)
-        
-        molsys, tspan = symbolic_discretize(pde_system,discretization)
-        
-        @unpack cumuSum = molsys
-        @unpack u = molsys
-        
-    
-        for k =1:nb_pin
+    @unpack u = molsys
 
-            push!(equations, component_ODE[k].i ~ Velocity*Source_term*(((Symbolics.scalarize(u)[k]))-component_ODE[k].v))
-        end 
-        # push!(equations,  cumuSum[1] ~ sum((component_ODE[k].i*f_c_d(x,k) for k=1:nb_pin)))
-        
-        
-        cumuSum ~ sum((component_ODE[k].i*f_c_d(x,k) for k=1:nb_pin))
-        # connected = extend(ODESystem(equations, t,[],[x, cumuSum]; name = :connected), molsys)
 
-        # for k =1:nb_pin
+    equations_sys = Vector{Equation}()
+    for k =1:(nb_pin)
 
-        #     connected = extend(connected, component_ODE[k])
-        # end 
-        # compose(connected, component_ODE...)
-        # compose(connected,component_ODE...; name = name)
-        connected = extend(ODESystem(equations, t, [], [x, cumuSum]; name = :connected),compose(molsys,[component_ODE...]))
+        push!(equations_sys, component_ODE[k].i ~ Velocity*(1/Source_term)*(((Symbolics.scalarize(u)[k]))-component_ODE[k].v))
+        
+    end 
+
+    
+    # sys_connection = ODESystem(eq, t; name =:Discretisation)
+    
+    sys_eq_1 = ODESystem(equations_sys, t; name=:Discretisation_2)
+    sys_comp = compose(sys_eq_1,[component_ODE...])
+    
+    sys = extend(sys_comp, molsys)
+
 end
 
 @component function VariableCurrent_evolve(sign;  name, tspan=1.0)
@@ -719,43 +726,67 @@ end
             
 end
 
-@component function soil_MTRCM_var_pin_var_ver_2(n,T_soil, tspan;name)
+@component function soil_MTRCM_var_pin_var_ver_2(n, T_soil, tspan; name)
     
+    n = n 
+    T_soil = T_soil
+    tspan = tspan 
+    @named Source_Fluid_1 = VariableCurrent_evolve_var_pins_1(n, T_soil, 1, tspan)
+    
+    @named Source_Fluid_2 = VariableCurrent_evolve_var_pins_2(n, T_soil, -1,tspan)
+    
+    # Pins_system = Vector{ODESystem}()
+    # Pins_system = [
 
+    # Source_Fluid_2.ODE_system_pin_2_1
+    # Source_Fluid_2.ODE_system_pin_2_2
+    # Source_Fluid_2.ODE_system_pin_2_3
+    # Source_Fluid_2.ODE_system_pin_2_4
+    # Source_Fluid_2.ODE_system_pin_2_5
+    # Source_Fluid_2.ODE_system_pin_2_6
 
-    @named Source_Fluid_1 = VariableCurrent_evolve_var_pins_1(10,1;tspan=tspan)
+    # Source_Fluid_1.ODE_system_pin_1_1
+    # Source_Fluid_1.ODE_system_pin_1_2
+    # Source_Fluid_1.ODE_system_pin_1_3
+    # Source_Fluid_1.ODE_system_pin_1_4
+    # Source_Fluid_1.ODE_system_pin_1_5
+    # Source_Fluid_1.ODE_system_pin_1_6
+    # ]
+    # LAYER ----------------------------------------------------------------------------
 
-    @named Source_Fluid_2 = VariableCurrent_evolve_var_pins_2(10,-1;tspan=tspan)
-
-    # @named pump = Distributor(Const_, L)
-
+    
     @named layer_1 = soil_MTRCM(T_soil)
 
-    number = n
-    component = [layer_1]
-    rc_eqs_2 = [
-        
-    # connect(Source_Fluid_1.n, pump.p)
-    # connect(Source_Fluid_2.n, pump.n)
 
-    connect(layer_1.fluid_2.resistor_0.p, ModelingToolkit.get_systems(Source_Fluid_2)[1])
-    connect(layer_1.fluid_1.resistor_0.p, ModelingToolkit.get_systems(Source_Fluid_1)[1])
+    layers = Vector{ODESystem}()
+    rc_eqs_2 = Vector{Equation}()
+
+    layers = [
+        layer_1
     ]
-    #Instantiation of the other soil Impedances 
+    rc_eqs_2 = [
 
+    
+    connect(layer_1.fluid_2.resistor_0.p, Source_Fluid_2.ODE_system_pin_2_1)
+    connect(layer_1.fluid_1.resistor_0.p, Source_Fluid_1.ODE_system_pin_1_1)
+
+    ]
+
+
+    number = n
     if number > 1
 
-        index = 2
         for index = 2:number
             ## Create the R 
 
-            layer_i = soil_MTRCM(T_soil;name = Symbol(string("layer_",index)))
-
-            push!(component, layer_i)
 
             
-            push!(rc_eqs_2, connect(layer_i.fluid_2.resistor_0.p, ModelingToolkit.get_systems(Source_Fluid_2)[index]))
-            push!(rc_eqs_2, connect(layer_i.fluid_1.resistor_0.p, ModelingToolkit.get_systems(Source_Fluid_1)[index]))
+            layer_i = soil_MTRCM(T_soil;name = Symbol(string("layer_",index)))
+
+            push!(layers, layer_i)
+            
+            push!(rc_eqs_2, connect(layer_i.fluid_2.resistor_0.p, getproperty(Source_Fluid_2, Symbol(string("ODE_system_pin_2_",index)))))
+            push!(rc_eqs_2, connect(layer_i.fluid_1.resistor_0.p, getproperty(Source_Fluid_1, Symbol(string("ODE_system_pin_1_",index)))))
             
         end        
 
@@ -763,11 +794,29 @@ end
         #error("n can't be less than 2 or higher than 10 ");
     end
 
-    system_1_pin = extend(Source_Fluid_1,ODESystem(rc_eqs_2, t; name = name))
-    system_2_pin = extend(Source_Fluid_1,ODESystem(rc_eqs_2, t; name = name))
+    # #Pin 2 
+    # push!(rc_eqs_2, connect(layers[2].fluid_2.resistor_0.p, Source_Fluid_2.ODE_system_pin_2_2))
+    # push!(rc_eqs_2, connect(layers[2].fluid_1.resistor_0.p, Source_Fluid_1.ODE_system_pin_1_2))
+    # #Pin 3    
+    # push!(rc_eqs_2, connect(layers[3].fluid_2.resistor_0.p, Source_Fluid_2.ODE_system_pin_2_3))
+    # push!(rc_eqs_2, connect(layers[3].fluid_1.resistor_0.p, Source_Fluid_1.ODE_system_pin_1_3))
+    # #Pin 4    
+    # push!(rc_eqs_2, connect(layers[4].fluid_2.resistor_0.p, Source_Fluid_2.ODE_system_pin_2_4))
+    # push!(rc_eqs_2, connect(layers[4].fluid_1.resistor_0.p, Source_Fluid_1.ODE_system_pin_1_4))
+    # #Pin 5    
+    # push!(rc_eqs_2, connect(layers[5].fluid_2.resistor_0.p, Source_Fluid_2.ODE_system_pin_2_5))
+    # push!(rc_eqs_2, connect(layers[5].fluid_1.resistor_0.p, Source_Fluid_1.ODE_system_pin_1_5))
+    # #Pin 3    
+    # push!(rc_eqs_2, connect(layers[6].fluid_2.resistor_0.p, Source_Fluid_2.ODE_system_pin_2_6))
+    # push!(rc_eqs_2, connect(layers[6].fluid_1.resistor_0.p, Source_Fluid_1.ODE_system_pin_1_6))
+
+    # # SOLVING ----------------------------------------------------------------------------
+
+    @named sys_2 = ODESystem(rc_eqs_2, t)
     
-    compose(ODESystem(rc_eqs_2, t; name = name),[system_1_pin,system_2_pin,component...])
-            
+    sys_3= compose(sys_2, [Source_Fluid_2, Source_Fluid_1, layers...]; name =name)
+    
+
 end
 
 @component function soil_n_var_simple(n, timer_; name, Rp = 1.0, Cp = 1.0, T_soil=1.0)
@@ -861,7 +910,7 @@ end
     @parameters tspan
     @variables t
     @variables u(..) cumuSum(..)
-
+    
     T_soil = 20
     
     R1 = Rcond
@@ -966,6 +1015,7 @@ end
     connect(layer_1.resistor_1.p, sys.ODE_system_pin_2_1)
     ]
 
+    
 
     number = nb_pin
     if number > 1
@@ -973,7 +1023,7 @@ end
         for index = 2:number
             ## Create the R 
 
-
+            
             layer_i = Wall_variable(name = Symbol(string("layer_",index));R1 =R1, R2=R2, R3=R3,C1=C1 , C2=C2)
             # soil_temp_i = ConstantVoltage(name = Symbol(string("soil_temp_",index)); V=T_soil)
             
@@ -984,6 +1034,11 @@ end
         
             push!(rc_eqs_2, connect(layer_i.resistor_3.n,soil_temp_1.p))
             # push!(rc_eqs_2, connect(soil_temp_i.n,ground.g))
+            pin_i = string("ODE_system_pin_2_",index)
+
+            # fieldname_i = fieldnames(sys)
+
+            push!(rc_eqs_2, connect(layer_i.resistor_1.p, getproperty(sys, Symbol(pin_i))))
 
 
             # push!(rc_eqs_2, connect(layer_i.resistor_1.p, component_ODE[index]))
@@ -993,15 +1048,15 @@ end
         #error("n can't be less than 2 or higher than 10 ");
     end
 
-    push!(rc_eqs_2, connect(layers[2].resistor_1.p, sys.ODE_system_pin_2_2))
+    # push!(rc_eqs_2, connect(layers[2].resistor_1.p, sys.ODE_system_pin_2_2))
 
-    push!(rc_eqs_2, connect(layers[3].resistor_1.p, sys.ODE_system_pin_2_3))
+    # push!(rc_eqs_2, connect(layers[3].resistor_1.p, sys.ODE_system_pin_2_3))
 
-    push!(rc_eqs_2, connect(layers[4].resistor_1.p, sys.ODE_system_pin_2_4))
+    # push!(rc_eqs_2, connect(layers[4].resistor_1.p, sys.ODE_system_pin_2_4))
 
-    push!(rc_eqs_2, connect(layers[5].resistor_1.p, sys.ODE_system_pin_2_5))
+    # push!(rc_eqs_2, connect(layers[5].resistor_1.p, sys.ODE_system_pin_2_5))
 
-    push!(rc_eqs_2, connect(layers[6].resistor_1.p, sys.ODE_system_pin_2_6))
+    # push!(rc_eqs_2, connect(layers[6].resistor_1.p, sys.ODE_system_pin_2_6))
 
     # SOLVING ----------------------------------------------------------------------------
 
