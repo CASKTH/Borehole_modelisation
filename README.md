@@ -16,7 +16,9 @@ _How to understand the code_
 
 2 - You can have acces to the "include files" which contain _data's computation_ and the _components_ declaration. The "function_component.jl" contain the main features, the component declaration. So the focus have to be done on that. note : it uses the "wall_component" which is a serie of R-C-R-C-R (like a wall) and a component soil_temp which is a constant-voltage (temperature). 
 
-3 - The component called "soil_MTRCM_var_pin_var_ver_2" contain the most updated work. So the focus have to be done on that. note : it uses the "soil_MRCTM" which is layers of MRCTM model, a component soil_temp which is a constant-voltage (temperature) and of course 2 fluid discretisation computation (with two different velocity sign). 
+3 - The component called "soil_MTRCM_var_pin_var_ver_2" contain the most updated work. So the focus have to be done on that. note : it uses the "soil_MRCTM" which is layers of MRCTM model, a component soil_temp which is a constant-voltage (temperature) and of course 2 fluid discretisation computation (with two different velocity sign).
+
+![Alt Text](/anim_fps15.gif)
 
 [deps]
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
