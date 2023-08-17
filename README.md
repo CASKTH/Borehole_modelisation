@@ -9,6 +9,12 @@ The model is a Acausal component based model containing :
 - The layer instantiation, function of n size of u(t)[x]
 - Ploting of the solution
 
+Note
+We are modelizing a U-Tube Borehole
+
+<p align="center">
+<img src="BHE.PNG"/>
+</p>
 
 ## _How to understand the code_ 
 
@@ -25,6 +31,10 @@ The model is a Acausal component based model containing :
 </p>
 
 3 - The component called "soil_MTRCM_var_pin_var_ver_2" contain the most updated work. So the focus have to be done on that. note : it uses the "soil_MRCTM" which is layers of MRCTM model, a component soil_temp which is a constant-voltage (temperature) and of course 2 fluid discretisation computation (with two different velocity sign).
+
+<p align="center">
+<img src="U-tube.PNG"/>
+</p>
 
 4 - The model also include now computation for the heat exchange with the ambient air/first layer of soil and for the Heat exchange between all layers.
 
@@ -61,7 +71,7 @@ The Y axis is the time axis. At time 0 everything is at 20 Degrees C. Then the f
 
 ## Display of the fluid going up (because it's a "U" borehole model) in the borehole 
 ### Conditions 
-Same as before 
+Same as before.
 
 <p align="center">
 <img src="fluid_2_sim_1.PNG"/>
@@ -69,6 +79,16 @@ Same as before
 
 ### Explanation 
 The Y axis is the time axis. This fluid 2 is connected at layer 10 with the precedent fluid. The heat at the end of time and at the layer 0 is around 20.3 Degrees C. 
+
+
+## Display of the fluid going down and up inside the "U" borehole
+### Conditions 
+Same as before. 
+
+<p align="center">
+<img src="Fluid_together.PNG"/>
+</p>
+
 
 # References and libraries 
 [1]
