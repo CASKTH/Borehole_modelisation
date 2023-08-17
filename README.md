@@ -2,7 +2,7 @@
 Project dedicated to borehole modilisation and command using Julia 
 ---
 
-##_Understand the model_ 
+## _Understand the model_ 
 
 The model is a Acausal component based model containing : 
 - The discrete convection-diffusion component giving a temperature discretisation through time and space : u(t)[x]
@@ -10,7 +10,7 @@ The model is a Acausal component based model containing :
 - Ploting of the solution
 
 
-##_How to understand the code_ 
+## _How to understand the code_ 
 
 1 - Today, the working codes are called "BHE_3D_CODE" and "Wall_layer_work.jl", they contain the layer-discretisation model solving and plotting. And maybe some of the variables are "undefined" like _timer_ (or others) but you can just add a definition before instantiation of the model "soil_..._layer". The compilation is quite long for the first run. "BHE_3D_CODE" contain the computation with the variables layers of MRCTM. 
 
@@ -29,7 +29,7 @@ The model is a Acausal component based model containing :
 4 - The model also include now computation for the heat exchange with the ambient air/first layer of soil and for the Heat exchange between all layers.
 
 # Result and Display 
-##Display of the soil-capacitor through time/depth/radius (radius of soil in a horizontal point of view, see fig 5, there is a capacitor for each soil) for : 
+## Display of the soil-capacitor through time/depth/radius (radius of soil in a horizontal point of view, see fig 5, there is a capacitor for each soil) for : 
 - 10 meters of soil - 10 layers for MRCTM model
 - Initial Temperature at 20 Degrees for the whole model
 - 41 days of simulation
@@ -40,7 +40,7 @@ The model is a Acausal component based model containing :
 <img src="anim_fps15.gif" alt="animated" />
 </p>
 
-##Display of the fluid going down in the borehole for : 
+## Display of the fluid going down in the borehole for : 
 - 10 meters of soil - 10 layers for MRCTM model
 - Initial Temperature at 20 Degrees for the whole model
 - 41 days of simulation
@@ -51,14 +51,14 @@ The model is a Acausal component based model containing :
 <img src="fluid_1_sim_1.PNG"/>
 </p>
 
-##Display of the fluid going up (because it's a "U" borehole model) in the borehole for : 
+## Display of the fluid going up (because it's a "U" borehole model) in the borehole for : 
 
 <p align="center">
 <img src="fluid_2_sim_1.PNG"/>
 </p>
 
 
-#References and libraries 
+# References and libraries 
 [1]
 Short-term simulation of ground heat exchanger with an improved TRCM
 Philippe Pasquier*, Denis Marcotte
