@@ -3,7 +3,7 @@
 
 
 #Time span for the simulation
-tspan = 86400*4;
+# tspan = 86400*4;
 
 # Here the material is water 
 # density in kg/m3
@@ -43,8 +43,8 @@ h = 100
 # #In the
 # TRCM, the fluid convection resistance (Rf) and pipe conduction
 # resistance (Rp) are lumped together within Rfp ¼ Rf þ Rp
-k_f= 0.4 #thermal conductivity of fluid 
-
+k_f= 0.7 #thermal conductivity of fluid 
+# k_f = 100
 
 #Nu = (h*L)/k_f
 
@@ -169,7 +169,7 @@ Vsoil_3 = round(((pi*r_soil_3^2)*L - (pi*r_soil_2^2)*L), digits = 5)
 
 ### CAPACITOR COMPUTATION ________________________________________________________
 #EQUATION (11) of [2]
-C_grout = round(rog*cg*Vg/2, digits = 3)
+C_grout = round(rog*cg*Vg/2, digits = 3) 
 C_gg = rog*cg*Vgg
 C_pipe = ro_pipe*c_pipe*Vp/2
 C_fluid = ro_fluid*c_fluid*Vf/2
@@ -197,3 +197,33 @@ C_g_p_gg = C_gg/2 + C_grout/2 + C_pipe/2
 # C_g_p_gg = C_grout
 C_g_s = C_grout + C_soil_1
 # C_g_s = C_soil_1 + C_grout/2
+
+
+#Resistance between layer 
+function R_therm_soil(L, k)
+    return L/k
+end
+# Resistance between soil and air (ambient)
+function R_therm_conv(h_conv,A)
+    return 1/(h_conv*5)
+end 
+
+
+function Grashof(g, B, Delta, L,visc)
+
+    return (g*B*Delta*L^3)/(visc^2)
+
+end 
+
+function Nusselt(G, Pr)
+
+    return (0.68+(0.670*G^(1/4))/(1+(0.492/Pr)^(9/16))^(4/9))
+
+end 
+
+
+function h_convection(Nu,k,H)
+
+    return (k/H)*Nu
+end
+
