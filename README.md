@@ -90,6 +90,13 @@ Same as before.
 </p>
 
 
+### Explanation 
+Result can be explain by this following picture. Heat enter in pipe 1 and heat propagate inside through time.
+
+<p align="center">
+<img src="explain.JPG"/>
+</p>
+
 # References and libraries 
 [1]
 Short-term simulation of ground heat exchanger with an improved TRCM
