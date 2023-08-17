@@ -29,7 +29,8 @@ The model is a Acausal component based model containing :
 4 - The model also include now computation for the heat exchange with the ambient air/first layer of soil and for the Heat exchange between all layers.
 
 # Result and Display 
-## Display of the soil-capacitor through time/depth/radius (radius of soil in a horizontal point of view, see fig 5, there is a capacitor for each soil) for : 
+## Display of the soil-capacitor through time/depth/radius (radius of soil in a horizontal point of view, see fig 5, there is a capacitor for each soil) 
+### Conditions  
 - 10 meters of soil - 10 layers for MRCTM model
 - Initial Temperature at 20 Degrees for the whole model
 - 41 days of simulation
@@ -40,7 +41,11 @@ The model is a Acausal component based model containing :
 <img src="anim_fps15.gif" alt="animated" />
 </p>
 
-## Display of the fluid going down in the borehole for : 
+### Explanation 
+The soil is being heat by the fluid inside the borehole which is for instance at 22 Degrees. You can see that the heat propagate throught time inside the soil layer "Discrete radius". We can also see that the more we go deep inside the soil (discrete depth), the less heat is propagating. 
+
+## Display of the fluid going down in the borehole
+### Conditions 
 - 10 meters of soil - 10 layers for MRCTM model
 - Initial Temperature at 20 Degrees for the whole model
 - 41 days of simulation
@@ -51,7 +56,9 @@ The model is a Acausal component based model containing :
 <img src="fluid_1_sim_1.PNG"/>
 </p>
 
-## Display of the fluid going up (because it's a "U" borehole model) in the borehole for : 
+## Display of the fluid going up (because it's a "U" borehole model) in the borehole 
+### Conditions 
+Same as before 
 
 <p align="center">
 <img src="fluid_2_sim_1.PNG"/>
