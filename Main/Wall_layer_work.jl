@@ -16,7 +16,7 @@ include("../include_files/datas_code.jl")
 ##Test 
 
 T_soil = 20 
-# timer_ = 86400
+timer_ = 86400
 
 ### TEST SOIL LAYER WITH RESISTOR 
 @named test_2 = soil_n_var_layer(6, 86400, 15)

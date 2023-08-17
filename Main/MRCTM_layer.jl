@@ -103,10 +103,21 @@ end
 
 # sys_connection = ODESystem(eq, t; name =:Discretisation)
 
-sys_eq_1 = ODESystem(equations_sys, t; name=:Discretisation)
+sys_eq_1 = ODESystem(equations_sys, t; name=:Discretisation_2)
 sys_comp = compose(sys_eq_1,[component_ODE...])
 
-sys = compose(molsys, sys_comp)
+sys = extend(sys_comp, molsys)
+
+
+# function get_sys_ODE(index, syss...; name = nameof(first(syss)))
+#     return collect(syss)
+# end
+
+# tes = get_sys_ODE(1, sys_comp)
+# tes
+
+# # sys = compose(molsys, sys_comp)
+
 
 # level1 = ODESystem(Equation[], t, [], []; name = :Discretisation)
 
