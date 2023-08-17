@@ -28,7 +28,7 @@ _How to understand the code_
 
 4 - The model also include now computation for the heat exchange with the ambient air/first layer of soil and for the Heat exchange between all layers
 
-Display of the soil-capacitor through time/depth/radius (radius of soil in a horizontal point of view) for : 
+Display of the soil-capacitor through time/depth/radius (radius of soil in a horizontal point of view, see fig 5, there is a capacitor for each soil) for : 
 - 10 meters of soil - 10 layers for MRCTM model
 - Initial Temperature at 20 Degrees for the whole model
 - 41 days of simulation
