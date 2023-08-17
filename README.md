@@ -56,6 +56,9 @@ The soil is being heat by the fluid inside the borehole which is for instance at
 <img src="fluid_1_sim_1.PNG"/>
 </p>
 
+### Explanation 
+The Y axis is the time axis. At time 0 everything is at 20 Degrees C. Then the fluid at layer 0 (top of the borehole) is being heat at 22 every time. This heat propagate inside the fluid in depth. 
+
 ## Display of the fluid going up (because it's a "U" borehole model) in the borehole 
 ### Conditions 
 Same as before 
@@ -64,6 +67,8 @@ Same as before
 <img src="fluid_2_sim_1.PNG"/>
 </p>
 
+### Explanation 
+The Y axis is the time axis. This fluid 2 is connected at layer 10 with the precedent fluid. The heat at the end of time and at the layer 0 is around 20.3 Degrees C. 
 
 # References and libraries 
 [1]
