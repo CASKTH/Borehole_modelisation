@@ -26,16 +26,34 @@ _How to understand the code_
 
 3 - The component called "soil_MTRCM_var_pin_var_ver_2" contain the most updated work. So the focus have to be done on that. note : it uses the "soil_MRCTM" which is layers of MRCTM model, a component soil_temp which is a constant-voltage (temperature) and of course 2 fluid discretisation computation (with two different velocity sign).
 
-4 - The model also include now computation for the heat exchange with the ambient air/first layer of soil and for the Heat exchange between all layers
+4 - The model also include now computation for the heat exchange with the ambient air/first layer of soil and for the Heat exchange between all layers.
 
 Display of the soil-capacitor through time/depth/radius (radius of soil in a horizontal point of view, see fig 5, there is a capacitor for each soil) for : 
 - 10 meters of soil - 10 layers for MRCTM model
 - Initial Temperature at 20 Degrees for the whole model
 - 41 days of simulation
+- velocity of the internal fluid of 0,0001 m/s 
 - boundaries condition on the fluid-discretization = [T_1(t, 0.0) ~ T_soil+2, T_1(0.0, x) ~ T_soil, T_2(0.0, x) ~ T_soil, T_1(t, xmax) ~ T_2(t, 0.0)]
 
 <p align="center">
 <img src="anim_fps15.gif" alt="animated" />
+</p>
+
+Display of the fluid going down in the borehole for : 
+- 10 meters of soil - 10 layers for MRCTM model
+- Initial Temperature at 20 Degrees for the whole model
+- 41 days of simulation
+- velocity of the internal fluid of 0,000001 m/s 
+- boundaries condition on the fluid-discretization = [T_1(t, 0.0) ~ T_soil+2, T_1(0.0, x) ~ T_soil, T_2(0.0, x) ~ T_soil, T_1(t, xmax) ~ T_2(t, 0.0)]
+
+<p align="center">
+<img src="fluid_1_sim_1.PNG"/>
+</p>
+
+Display of the fluid going up (because it's a "U" borehole model) in the borehole for : 
+
+<p align="center">
+<img src="fluid_2_sim_1.PNG"/>
 </p>
 
 [deps]
