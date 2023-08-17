@@ -24,7 +24,7 @@ We are modelizing a U-Tube case-B Borehole
 <img src="MRCTM_img.PNG"/>
 </p>
 
-2 - You can have acces to the "include files" which contain _data's computation_ and the _components_ declaration. The "function_component.jl" contain the main features, the component declaration. So the focus have to be done on that. note : it uses the "wall_component" which is a serie of R-C-R-C-R (like a wall) and a component soil_temp which is a constant-voltage (temperature). 
+2 - You can have acces to the "include files" which contain _data's computation_ and the _components_ declaration. The "function_component_thermal.jl" contain the main features, the component declaration. So the focus have to be done on that. note : it uses the "wall_component" which is a serie of R-C-R-C-R (like a wall) and a component soil_temp which is a constant-voltage (temperature). 
 
 <p align="center">
 <img src="radius_BHE.PNG"/>
