@@ -33,7 +33,7 @@ We are modelizing a U-Tube case-B Borehole
 3 - The component called "soil_MTRCM_var_pin_var_ver_2" contain the most updated work. So the focus have to be done on that. note : it uses the "soil_MRCTM" which is layers of MRCTM model, a component soil_temp which is a constant-voltage (temperature) and of course 2 fluid discretisation computation (with two different velocity sign).
 
 <p align="center">
-<img src="U-tube.PNG"/>
+<img src="U-tube.png"/>
 </p>
 
 4 - The model also include now computation for the heat exchange with the ambient air/first layer of soil and for the Heat exchange between all layers.
