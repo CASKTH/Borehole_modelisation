@@ -9,8 +9,8 @@ The model is a Acausal component based model containing :
 - The layer instantiation, function of n size of u(t)[x]
 - Ploting of the solution
 
-Note
-We are modelizing a U-Tube Borehole
+Note :
+We are modelizing a U-Tube case-B Borehole
 
 <p align="center">
 <img src="BHE.PNG"/>
