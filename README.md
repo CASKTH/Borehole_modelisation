@@ -94,7 +94,7 @@ Same as before.
 Result can be explain by this following picture. Heat enter in pipe 1 and heat propagate inside through time.
 
 <p align="center">
-<img src="explain.JPG"/>
+<img src="explain.jpg"/>
 </p>
 
 # References and libraries 
