@@ -42,7 +42,7 @@ The model is a Acausal component based model containing :
 </p>
 
 ### Explanation 
-The soil is being heat by the fluid inside the borehole which is for instance at 22 Degrees. You can see that the heat propagate throught time inside the soil layer "Discrete radius". We can also see that the more we go deep inside the soil (discrete depth), the less heat is propagating. 
+The soil is being heat by the fluid inside the borehole which is for instance at 22 Degrees. You can see that the heat propagate throught time inside the soil layers "Discrete radius". We can also see that the more we go deep inside the soil (discrete depth), the less heat is propagating. 
 
 ## Display of the fluid going down in the borehole
 ### Conditions 
