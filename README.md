@@ -91,7 +91,7 @@ Same as before.
 
 
 ### Explanation 
-Result can be explain by this following picture. Heat enter in pipe 1 and heat propagate inside through time.
+Result can be explain by this following picture. Heat enter in pipe 1 inlet and heat propagate inside through time.
 
 <p align="center">
 <img src="explain.jpg"/>
