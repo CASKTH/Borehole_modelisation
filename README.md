@@ -14,9 +14,26 @@ _How to understand the code_
 
 1 - Today, the working codes are called "BHE_3D_CODE" and "Wall_layer_work.jl", they contain the layer-discretisation model solving and plotting. And maybe some of the variables are "undefined" like _timer_ (or others) but you can just add a definition before instantiation of the model "soil_..._layer". The compilation is quite long for the first run. "BHE_3D_CODE" contain the computation with the variables layers of MRCTM. 
 
+<p align="center">
+<img src="MRCTM_img.png"/>
+</p>
+
 2 - You can have acces to the "include files" which contain _data's computation_ and the _components_ declaration. The "function_component.jl" contain the main features, the component declaration. So the focus have to be done on that. note : it uses the "wall_component" which is a serie of R-C-R-C-R (like a wall) and a component soil_temp which is a constant-voltage (temperature). 
 
+<p align="center">
+<img src="radius_BHE.png"/>
+</p>
+
 3 - The component called "soil_MTRCM_var_pin_var_ver_2" contain the most updated work. So the focus have to be done on that. note : it uses the "soil_MRCTM" which is layers of MRCTM model, a component soil_temp which is a constant-voltage (temperature) and of course 2 fluid discretisation computation (with two different velocity sign).
+
+4 - The model also include now computation for the heat exchange with the ambient air/first layer of soil and for the Heat exchange between all layers
+
+Display of the soil-capacitor through time/depth/radius (radius of soil in a horizontal point of view) for : 
+- 10 meters of soil - 10 layers for MRCTM model
+- Initial Temperature at 20 Degrees for the whole model
+- 41 days of simulation
+- boundaries condition on the fluid-discretization = [T_1(t, 0.0) ~ T_soil+2, T_1(0.0, x) ~ T_soil, T_2(0.0, x) ~ T_soil, T_1(t, xmax) ~ T_2(t, 0.0)]
+
 <p align="center">
 <img src="anim_fps15.gif" alt="animated" />
 </p>
