@@ -65,7 +65,7 @@ The soil is being heat by the fluid inside the borehole which is for instance at
 - boundaries condition on the fluid-discretization = [T_1(t, 0.0) ~ T_soil+2, T_1(0.0, x) ~ T_soil, T_2(0.0, x) ~ T_soil, T_1(t, xmax) ~ T_2(t, 0.0)]
 
 <p align="center">
-<img src="anim_fps25_20.gif" alt="animated" />
+<img src="anim_fps20_20.gif" alt="animated" />
 </p>
 
 ## Display of the fluid going down in the borehole
