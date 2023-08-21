@@ -104,7 +104,7 @@ Result can be explain by this following picture. Heat enter in pipe 1 inlet and 
 Same as before but the ambiant air is at 20 degrees 
 
 <p align="center">
-<img src="Fluid_together.PNG"/>
+<img src="Fluid_together_air ambiant at 20.PNG"/>
 </p>
 
 # References and libraries 
