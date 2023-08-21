@@ -44,7 +44,8 @@ We are modelizing a U-Tube case-B Borehole
 - 10 meters of soil - 10 layers for MRCTM model
 - Initial Temperature at 20 Degrees for the whole model
 - 41 days of simulation
-- velocity of the internal fluid of 0,0001 m/s 
+- velocity of the internal fluid of 0,0001 m/s
+- Ambient Air at 15 Degrees C
 - boundaries condition on the fluid-discretization = [T_1(t, 0.0) ~ T_soil+2, T_1(0.0, x) ~ T_soil, T_2(0.0, x) ~ T_soil, T_1(t, xmax) ~ T_2(t, 0.0)]
 
 <p align="center">
@@ -59,7 +60,8 @@ The soil is being heat by the fluid inside the borehole which is for instance at
 - 10 meters of soil - 10 layers for MRCTM model
 - Initial Temperature at 20 Degrees for the whole model
 - 41 days of simulation
-- velocity of the internal fluid of 0,000001 m/s 
+- velocity of the internal fluid of 0,000001 m/s
+- Ambient Air at 15 Degrees C
 - boundaries condition on the fluid-discretization = [T_1(t, 0.0) ~ T_soil+2, T_1(0.0, x) ~ T_soil, T_2(0.0, x) ~ T_soil, T_1(t, xmax) ~ T_2(t, 0.0)]
 
 <p align="center">
