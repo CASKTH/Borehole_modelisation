@@ -101,7 +101,7 @@ Result can be explain by this following picture. Heat enter in pipe 1 inlet and 
 
 ## Display of the fluid going down and up inside the "U" borehole
 ### Conditions 
-Same as before but the ambiant air is at 20 degrees 
+Same as before but the ambiant air is at 20 degrees and during 600 days.
 
 <p align="center">
 <img src="Fluid_together_air ambiant at 20.PNG"/>
