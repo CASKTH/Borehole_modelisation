@@ -99,6 +99,14 @@ Result can be explain by this following picture. Heat enter in pipe 1 inlet and 
 <img src="explain.jpg"/>
 </p>
 
+## Display of the fluid going down and up inside the "U" borehole
+### Conditions 
+Same as before but the ambiant air is at 20 degrees 
+
+<p align="center">
+<img src="Fluid_together.PNG"/>
+</p>
+
 # References and libraries 
 [1]
 Short-term simulation of ground heat exchanger with an improved TRCM
