@@ -55,6 +55,19 @@ We are modelizing a U-Tube case-B Borehole
 ### Explanation 
 The soil is being heat by the fluid inside the borehole which is for instance at 22 Degrees. You can see that the heat propagate throught time inside the soil layers "Discrete radius". We can also see that the more we go deep inside the soil (discrete depth), the less heat is propagating. 
 
+## Second Display of the soil-capacitor through time/depth/radius (radius of soil in a horizontal point of view, see fig 5, there is a capacitor for each soil) 
+### Conditions  
+- 10 meters of soil - 10 layers for MRCTM model
+- Initial Temperature at 20 Degrees for the whole model
+- 600 days of simulation
+- velocity of the internal fluid of 0,000001 m/s
+- Ambient Air at 20 Degrees C
+- boundaries condition on the fluid-discretization = [T_1(t, 0.0) ~ T_soil+2, T_1(0.0, x) ~ T_soil, T_2(0.0, x) ~ T_soil, T_1(t, xmax) ~ T_2(t, 0.0)]
+
+<p align="center">
+<img src="anim_fps25_20.gif" alt="animated" />
+</p>
+
 ## Display of the fluid going down in the borehole
 ### Conditions 
 - 10 meters of soil - 10 layers for MRCTM model
