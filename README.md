@@ -1,10 +1,10 @@
 # Borehole_modelisation
-Project dedicated to borehole modilisation and command using Julia 
+Project dedicated to borehole modelisation using Julia 
 ---
 
 ## _Understand the model_ 
 
-The model is a Acausal component based model containing : 
+The model is a Acausal component-based model containing : 
 - The discrete convection-diffusion component giving a temperature discretisation through time and space : u(t)[x]
 - The layer instantiation, function of n size of u(t)[x]
 - Ploting of the solution
@@ -18,7 +18,7 @@ We are modelizing a U-Tube case-B Borehole
 
 ## _How to understand the code_ 
 
-1 - Today, the working codes are called "BHE_3D_CODE" and "Wall_layer_work.jl", they contain the layer-discretisation model solving and plotting. And maybe some of the variables are "undefined" like _timer_ (or others) but you can just add a definition before instantiation of the model "soil_..._layer". The compilation is quite long for the first run. "BHE_3D_CODE" contain the computation with the variables layers of MRCTM. 
+1 - Today, the working code is called "BHE_3D_CODE", it contain the layer-discretisation model solving and plotting. And maybe some of the variables are "undefined" like _timer_ (or others) but you can just add a definition before instantiation of the model "soil_..._layer". The compilation is quite long for the first run. "BHE_3D_CODE" contain the computation with the variables layers of MRCTM. 
 
 <p align="center">
 <img src="MRCTM_img.PNG"/>
@@ -42,10 +42,10 @@ We are modelizing a U-Tube case-B Borehole
 ## Display of the soil-capacitor through time/depth/radius (radius of soil in a horizontal point of view, see fig 5, there is a capacitor for each soil) 
 ### Conditions  
 - 10 meters of soil - 10 layers for MRCTM model
-- Initial Temperature at 20 Degrees for the whole model
+- Initial Temperature at 20 °C for the whole model
 - 41 days of simulation
 - velocity of the internal fluid of 0,0001 m/s
-- Ambient Air at 15 Degrees C
+- Ambient Air at 15 °C
 - boundaries condition on the fluid-discretization = [T_1(t, 0.0) ~ T_soil+2, T_1(0.0, x) ~ T_soil, T_2(0.0, x) ~ T_soil, T_1(t, xmax) ~ T_2(t, 0.0)]
 
 <p align="center">
@@ -53,15 +53,15 @@ We are modelizing a U-Tube case-B Borehole
 </p>
 
 ### Explanation 
-The soil is being heat by the fluid inside the borehole which is for instance at 22 Degrees. You can see that the heat propagate throught time inside the soil layers "Discrete radius". We can also see that the more we go deep inside the soil (discrete depth), the less heat is propagating. 
+The soil is being heat by the fluid inside the borehole which is for instance at 22°C. You can see that the heat propagate throught time inside the soil layers "Discrete radius". We can also see that the more we go deep inside the soil (discrete depth), the less heat is propagating. 
 
 ## Second Display of the soil-capacitor through time/depth/radius (radius of soil in a horizontal point of view, see fig 5, there is a capacitor for each soil) 
 ### Conditions  
 - 10 meters of soil - 10 layers for MRCTM model
-- Initial Temperature at 20 Degrees for the whole model
+- Initial Temperature at 20 °C for the whole model
 - 600 days of simulation
 - velocity of the internal fluid of 0,000001 m/s
-- Ambient Air at 20 Degrees C
+- Ambient Air at 20 °C
 - boundaries condition on the fluid-discretization = [T_1(t, 0.0) ~ T_soil+2, T_1(0.0, x) ~ T_soil, T_2(0.0, x) ~ T_soil, T_1(t, xmax) ~ T_2(t, 0.0)]
 
 <p align="center">
@@ -71,10 +71,10 @@ The soil is being heat by the fluid inside the borehole which is for instance at
 ## Display of the fluid going down in the borehole
 ### Conditions 
 - 10 meters of soil - 10 layers for MRCTM model
-- Initial Temperature at 20 Degrees for the whole model
+- Initial Temperature at 20 °C for the whole model
 - 41 days of simulation
 - velocity of the internal fluid of 0,000001 m/s
-- Ambient Air at 15 Degrees C
+- Ambient Air at 15 °C
 - boundaries condition on the fluid-discretization = [T_1(t, 0.0) ~ T_soil+2, T_1(0.0, x) ~ T_soil, T_2(0.0, x) ~ T_soil, T_1(t, xmax) ~ T_2(t, 0.0)]
 
 <p align="center">
@@ -82,7 +82,7 @@ The soil is being heat by the fluid inside the borehole which is for instance at
 </p>
 
 ### Explanation 
-The Y axis is the time axis. At time 0 everything is at 20 Degrees C. Then the fluid at layer 0 (top of the borehole) is being heat at 22 every time. This heat propagate inside the fluid in depth. 
+The Y axis is the time axis. At time 0 everything is at 20 °C. Then the fluid at layer 0 (top of the borehole) is being heat at 22 °C every time. This heat propagate inside the fluid in depth. 
 
 ## Display of the fluid going up (because it's a "U" borehole model) in the borehole 
 ### Conditions 
@@ -93,7 +93,7 @@ Same as before.
 </p>
 
 ### Explanation 
-The Y axis is the time axis. This fluid 2 is connected at layer 10 with the precedent fluid. The heat at the end of time and at the layer 0 is around 20.3 Degrees C. 
+The Y axis is the time axis. This fluid 2 is connected at layer 10 with the precedent fluid. The heat at the end of time and at the layer 0 is around 20.3 °C. 
 
 
 ## Display of the fluid going down and up inside the "U" borehole
@@ -114,7 +114,7 @@ Result can be explain by this following picture. Heat enter in pipe 1 inlet and 
 
 ## Display of the fluid going down and up inside the "U" borehole
 ### Conditions 
-Same as before but the ambiant air is at 20 degrees and during 600 days.
+Same as before but the ambiant air is at 20 °C and during 600 days.
 
 <p align="center">
 <img src="Fluid_together_air ambiant at 20.PNG"/>
