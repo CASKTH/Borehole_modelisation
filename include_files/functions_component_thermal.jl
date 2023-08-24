@@ -153,14 +153,15 @@ end
     extend(ODESystem(eqs, t, sts, ps; name = name), oneport)
 end
 
-@component function VariableCurrent_evolve_var_pins_1(nb_pin, T_soil,sign,  timer_,Velocity; name)
+@component function VariableCurrent_evolve_var_pins_1(heat, nb_pin, T_soil,sign,  timer_,Velocity; name)
           
 
     
     @parameters x
     @parameters tspan
+    @parameters DeltaT
     @variables t
-    @variables T_1(..) cumuSum(..) T_2(..)
+    @variables T_1(..) cumuSum(..) T_2(..) 
 
     Velocity = Velocity
     R1 = Rcond
@@ -168,7 +169,8 @@ end
     R3 = Rsoil_1
     C1 = C_pipe
     C2 = C_grout
-
+    
+    heat=heat
     sign = sign 
     T_soil = T_soil
     tspan = timer_
@@ -218,6 +220,8 @@ end
     # x_min = 0.0:0.1:0.9
     # x_max = 0.1:0.1:1.0
 
+    m = mass_density_fluid*volume_flow_rate
+    Delta = heat/(m*c_fluid*ro_fluid)
 
     # Ix(xmin) = Integral(x in DomainSets.ClosedInterval(xmin, x))
     # @register_symbolic Ix(xmin)
@@ -227,30 +231,30 @@ end
     # @register_symbolic f_IX_(x)
 
     eq = [
-        Dt(T_1(t, x)) - Diffusivity*Dxx(T_1(t, x)) + Velocity*Dx(T_1(t, x)) - Source_term*(Heat_flow(x)) ~ 0,
-        Dt(T_2(t, x)) - Diffusivity*Dxx(T_2(t, x)) + Velocity*Dx(T_2(t, x)) - Source_term*(Heat_flow_2(x)) ~ 0,
-        
+        Dt(T_1(t, x)) - Diffusivity*Dxx(T_1(t, x)) + Velocity*Dx(T_1(t, x)) + Source_term*(Heat_flow(x)) ~ 0,
+        Dt(T_2(t, x)) - Diffusivity*Dxx(T_2(t, x)) - Velocity*Dx(T_2(t, x)) + Source_term*(Heat_flow_2(x)) ~ 0,
+       
     ]
     #We can't access to the variables used for discretization but we can use T_wall 
     # because cumusum and u aren't declare as the same as after discretization
-    bcs = [T_1(t, 0.0) ~ T_soil+2, T_1(0.0, x) ~ T_soil, T_2(0.0, x) ~ T_soil, T_1(t, xmax) ~ T_2(t, 0.0)]
+    bcs = [T_1(t, xmax) ~ T_2(t, xmax), T_1(t, xmin) ~ 1 + T_2(t, xmin), T_1(0.0, x) ~ T_soil, T_2(0.0, x) ~ T_soil]
 
     domains = [t ∈ Interval(0.0, tspan), x ∈ Interval(xmin, xmax)]
 
-    @named pde_system = PDESystem(eq, bcs, domains, [t, x], [T_1(t, x), T_2(t, x)])
+    @named pde_system = PDESystem(eq, bcs, domains, [t, x], [T_1(t, x), T_2(t, x)], [DeltaT => Delta])
     discretization = MOLFiniteDifference([x => nb_pin], t)
-    # ds = DiscreteSpace(domains, [u(t,x).Tal], [x.Tal], discretization)
+
     
     molsys, tspan = symbolic_discretize(pde_system,discretization)
     
+    full_equations(molsys)
 
     @unpack T_1 = molsys
     @unpack T_2 = molsys
 
-
     equations_sys = Vector{Equation}()
     for k =1:(nb_pin)
-
+        
         push!(equations_sys, component_ODE[k].q ~ c_fluid*ro_fluid*(((Symbolics.scalarize(T_1)[k]))-component_ODE[k].T))
         push!(equations_sys, component_ODE_2[k].q ~ c_fluid*ro_fluid*(((Symbolics.scalarize(T_2)[k]))-component_ODE_2[k].T))
         
@@ -878,13 +882,13 @@ end
     extend(ODESystem(eqs, t, sts, []; name = name), oneport)
 end
 
-@component function soil_MTRCM_var_pin_var_ver_2(Delta, n, T_soil, tspan, Velocity; name)
-    Delta = Delta
+@component function soil_MTRCM_var_pin_var_ver_2(heat, n, T_soil, tspan, Velocity; name)
+    heat = heat
     Velocity = Velocity
     n = n 
     T_soil = T_soil
     tspan = tspan 
-    @named Source_Fluid_1 = VariableCurrent_evolve_var_pins_1(n, T_soil, 1, tspan, Velocity)
+    @named Source_Fluid_1 = VariableCurrent_evolve_var_pins_1(heat, n, T_soil, 1, tspan, Velocity)
  
     # LAYER ----------------------------------------------------------------------------
 
@@ -902,7 +906,9 @@ end
     rc_eqs_2 = [
 
     
-    connect(layer_1.fluid_2.resistor_0.p, getproperty(Source_Fluid_1, Symbol(string("ODE_system_pin_2_",n))))
+    #connect(layer_1.fluid_2.resistor_0.p, getproperty(Source_Fluid_1, Symbol(string("ODE_system_pin_2_",n))))
+    
+    connect(layer_1.fluid_2.resistor_0.p, Source_Fluid_1.ODE_system_pin_2_1)
     connect(layer_1.fluid_1.resistor_0.p, Source_Fluid_1.ODE_system_pin_1_1)
 
     ]
@@ -912,7 +918,7 @@ end
     number = n
     ## Create the R 
     
-    T_air = ConstantVoltage(;temp=15, name = Symbol(string("T_air_ambient")))
+    T_air = ConstantVoltage(;temp=20, name = Symbol(string("T_air_ambient")))
     push!(Rth_layers, T_air)
     #computing Res conT and R cond for air ambient 
     # considering 0,5 meter deepth between air and the first layer of soil (MRCTM)
@@ -971,7 +977,8 @@ end
 
             push!(layers, layer_i)
             # connect pin 9 (10+1 -2 = 9)..2 to layer_.._fluid_2
-            push!(rc_eqs_2, connect(layer_i.fluid_2.resistor_0.p, getproperty(Source_Fluid_1, Symbol(string("ODE_system_pin_2_",((n+1)-index))))))
+            #push!(rc_eqs_2, connect(layer_i.fluid_2.resistor_0.p, getproperty(Source_Fluid_1, Symbol(string("ODE_system_pin_2_",((n+1)-index))))))
+            push!(rc_eqs_2, connect(layer_i.fluid_2.resistor_0.p, getproperty(Source_Fluid_1, Symbol(string("ODE_system_pin_2_",index)))))
             # connect pin 2..10 to layer_.._fluid_1
             push!(rc_eqs_2, connect(layer_i.fluid_1.resistor_0.p, getproperty(Source_Fluid_1, Symbol(string("ODE_system_pin_1_",index)))))
             
