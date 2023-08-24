@@ -17,6 +17,7 @@ We are modelizing a U-Tube case-B Borehole
 </p>
 
 ## _How to understand the code_ 
+Note before reading : the description is made for the branch "master", the second branch is about recent öodification for heat flow control system.
 
 1 - Today, the working code is called "BHE_3D_CODE", it contain the layer-discretisation model solving and plotting. And maybe some of the variables are "undefined" like _timer_ (or others) but you can just add a definition before instantiation of the model "soil_..._layer". The compilation is quite long for the first run. "BHE_3D_CODE" contain the computation with the variables layers of MRCTM. 
 
