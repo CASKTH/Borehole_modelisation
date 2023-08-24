@@ -22,17 +22,19 @@ T_grout = 10
 T_soil= 20
 
 
-timer_= 86400*41
+timer_= 86400*10
 n = 10
-Velocity = 0.0001
-Delta = 1
-@named complex_soil = soil_MTRCM_var_pin_var_ver_2(Delta, n, T_soil, timer_, Velocity)
+Velocity = 0.000001
+heat = 2000
+#watt
+
+@named complex_soil = soil_MTRCM_var_pin_var_ver_2(heat, n, T_soil, timer_, Velocity)
 
 # @named ODE_Disc_var = VariableCurrent_evolve_var_pins_1(10, 20, 1, timer_, Velocity)
 
-# path = joinpath(@__DIR__, "design") # folder where visualization info is saved and retrieved
-# design = ODESystemDesign(complex_soil, path);
-# ModelingToolkitDesigner.view(design)
+path = joinpath(@__DIR__, "design") # folder where visualization info is saved and retrieved
+design = ODESystemDesign(complex_soil, path);
+ModelingToolkitDesigner.view(design)
 # @named simple_layers = soil_n_var_simple(6, timer_; Rp=1.0, Cp=1.0, T_soil = 20)
 # @named wall_layers = soil_n_var_layer(4, timer_, T_soil)
 # @unpack cumuSum = simple_layers.connected
@@ -255,7 +257,7 @@ red_sol_2 = reduce(hcat, solu_2)
 
 # WGLMakie.activate!()
 
-zmin, zmax = minimum(red_sol), maximum(red_sol)
+zmin, zmax = minimum(red_sol_2), maximum(red_sol)
 cmap = :viridis
 cmap_2 = :viridis
 
@@ -265,26 +267,26 @@ ax = Axis3(fig[1, 1], aspect = :data, perspectiveness = 0.5, elevation = π/9,
     zgridcolor = :grey, ygridcolor = :grey, xgridcolor = :grey)
 
 
-sm_1 = WGLMakie.surface!(ax, x, discrete_t*0.000001, red_sol; colormap = cmap, colorrange = (zmin, zmax),
-    transparency = true)
+sm_1 = WGLMakie.surface!(ax, x, discrete_t*0.00001, red_sol; colormap = cmap, colorrange = (zmin, zmax),
+    transparency = false)
     #WGLMakie.wireframe!(ax, x, discrete_t*0.000001, red_sol; overdraw = true, transparency = true, color = (:black, 0.1))
 
 ax2 = Axis3(fig[2, 1], aspect = :data, perspectiveness = 0.5, elevation = π / 9,
 xzpanelcolor = (:black, 0.75), yzpanelcolor = (:black, 0.75),
 zgridcolor = :grey, ygridcolor = :grey, xgridcolor = :grey)
 
-zmin, zmax = minimum(red_sol_2), maximum(red_sol_2)
-sm_2 = WGLMakie.surface!(ax2, discrete_x_2, discrete_t*0.000001, red_sol_2; colormap = cmap_2, colorrange = (zmin, zmax),
-    transparency = true)
+
+sm_2 = WGLMakie.surface!(ax, discrete_x, discrete_t*0.00001, red_sol_2; colormap = cmap_2, colorrange = (zmin, zmax),
+    transparency = false)
 
 xm, ym, zm = minimum(ax.finallimits[])
 
 
 
-Colorbar(fig[1, 2], sm_1, height = Relative(0.5))
+#Colorbar(fig[1, 2], sm_1, height = Relative(0.5))
 colsize!(fig.layout, 1, Aspect(1, 1.0))
 
-Colorbar(fig[2, 2], sm_2, height = Relative(0.5))
+#Colorbar(fig[1, 2], sm_1, height = Relative(0.5))
 colsize!(fig.layout, 1, Aspect(1, 1.0))
 fig
 
@@ -307,7 +309,7 @@ end
 
 
 zcat(v) = cat(v...,dims=3)
-M = zcat(v_n_tr[1:2])
+M = zcat(v_n_tr[1:10])
 
 discrete_t
 
@@ -319,3 +321,8 @@ anim = @animate for i ∈ 1:length(discrete_t)
 end
 
 gif(anim, "anim_fps15.gif", fps = 20)
+
+
+anim_2 = @animate for i ∈ 1:length(discrete_t)
+    Plots.contourf(M[i,:,:]',levels=10, color=:viridis, linewidth=0, clims=(min_z, max_z), xlabel="Discrete radius", ylabel="Discrete depth");
+end
